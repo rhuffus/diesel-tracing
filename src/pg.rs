@@ -123,9 +123,8 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
-            source=source,
         ),
-        skip(self),
+        skip(self, source),
         err,
     )]
     fn query_by_index<T, U>(&self, source: T) -> QueryResult<Vec<U>>
@@ -136,6 +135,7 @@ impl Connection for InstrumentedPgConnection {
         U: Queryable<T::SqlType, Pg>,
     {
         debug!("querying by index");
+        debug!("Query: {:?}", source.to_sql().into());
         self.inner.query_by_index(source)
     }
 
@@ -148,9 +148,8 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
-            source=source,
         ),
-        skip(self),
+        skip(self, source),
         err,
     )]
     fn query_by_name<T, U>(&self, source: &T) -> QueryResult<Vec<U>>
@@ -159,6 +158,7 @@ impl Connection for InstrumentedPgConnection {
         U: QueryableByName<Pg>,
     {
         debug!("querying by name");
+        debug!("Query: {:?}", source.to_sql().into());
         self.inner.query_by_name(source)
     }
 
@@ -171,9 +171,8 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
-            source=source,
         ),
-        skip(self),
+        skip(self, source),
         err,
     )]
     fn execute_returning_count<T>(&self, source: &T) -> QueryResult<usize>
@@ -181,6 +180,7 @@ impl Connection for InstrumentedPgConnection {
         T: QueryFragment<Pg> + QueryId,
     {
         debug!("executing returning count");
+        debug!("Query: {:?}", source.to_sql().into());
         self.inner.execute_returning_count(source)
     }
 
