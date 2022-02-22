@@ -7,6 +7,7 @@ use diesel::sql_types::HasSqlType;
 use diesel::RunQueryDsl;
 use diesel::{no_arg_sql_function, select};
 use tracing::{debug, field, instrument};
+use highlight::sql;
 
 // https://www.postgresql.org/docs/12/functions-info.html
 // db.name
@@ -135,7 +136,7 @@ impl Connection for InstrumentedPgConnection {
         U: Queryable<T::SqlType, Pg>,
     {
         debug!("querying by index");
-        debug!("Query: {:?}", source.to_sql().into());
+        debug!("Query: {:?}", sql!(source.to_sql().into()));
         self.inner.query_by_index(source)
     }
 
@@ -158,7 +159,7 @@ impl Connection for InstrumentedPgConnection {
         U: QueryableByName<Pg>,
     {
         debug!("querying by name");
-        debug!("Query: {:?}", source.to_sql().into());
+        debug!("Query: {:?}", sql!(source.to_sql().into()));
         self.inner.query_by_name(source)
     }
 
@@ -180,7 +181,7 @@ impl Connection for InstrumentedPgConnection {
         T: QueryFragment<Pg> + QueryId,
     {
         debug!("executing returning count");
-        debug!("Query: {:?}", source.to_sql().into());
+        debug!("Query: {:?}", sql!(source.to_sql().into()));
         self.inner.execute_returning_count(source)
     }
 
