@@ -40,8 +40,9 @@ impl SimpleConnection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
+            query=query,
         ),
-        skip(self, query),
+        skip(self),
         err,
     )]
     fn batch_execute(&self, query: &str) -> QueryResult<()> {
@@ -64,8 +65,8 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=field::Empty,
             net.peer.port=field::Empty,
+            database_url=database_url,
         ),
-        skip(database_url),
         err,
     )]
     fn establish(database_url: &str) -> ConnectionResult<InstrumentedPgConnection> {
@@ -103,8 +104,9 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
+            query=query,
         ),
-        skip(self, query),
+        skip(self),
         err,
     )]
     fn execute(&self, query: &str) -> QueryResult<usize> {
@@ -121,8 +123,9 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
+            source=source,
         ),
-        skip(self, source),
+        skip(self),
         err,
     )]
     fn query_by_index<T, U>(&self, source: T) -> QueryResult<Vec<U>>
@@ -145,8 +148,9 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
+            source=source,
         ),
-        skip(self, source),
+        skip(self),
         err,
     )]
     fn query_by_name<T, U>(&self, source: &T) -> QueryResult<Vec<U>>
@@ -167,8 +171,9 @@ impl Connection for InstrumentedPgConnection {
             otel.kind="client",
             net.peer.ip=%self.info.inet_server_addr,
             net.peer.port=%self.info.inet_server_port,
+            source=source,
         ),
-        skip(self, source),
+        skip(self),
         err,
     )]
     fn execute_returning_count<T>(&self, source: &T) -> QueryResult<usize>
